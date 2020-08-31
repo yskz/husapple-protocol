@@ -1,0 +1,18 @@
+{
+  "name": "husapple-protocol",
+  "version": "1.0.0",
+  "description": "husapple's application protocol",
+  "main": "index.js",
+  "repository": "git@github.com:yskz/husapple-protocol.git",
+  "author": "Yoshikazu Satake <yskz@metamagic.co.jp>",
+  "license": "AGPL-3.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint index.js",
+    "test": "yarn lint"
+  },
+  "devDependencies": {
+    "eslint": "^7.8.0",
+    "eslint-plugin-node": "^11.1.0"
+  }
+}
