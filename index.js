@@ -13,8 +13,11 @@ const errorId = {
 
 const playerNameMaxLength = 64;
 
+const message = require('./src/message');
+
 
 module.exports = {
     ErrorId: errorId,
     PlayerNameMaxLength: playerNameMaxLength,
+    Message: message,
 };
