@@ -1,6 +1,7 @@
 const messageType = {
     hello: 'HeLlO',
     requestSignIn: 'ReQsIgNiN',
+    signIn: 'SiGnIn',
 };
 
 const playerNameMaxLength = 64;
@@ -73,9 +74,27 @@ class RequestSignIn extends Unknown {
     }
 }
 
+class SignIn extends Unknown {
+    constructor() {
+        super(messageType.signIn);
+    }
+    sendProps() {
+        return super.sendProps({});
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.signIn);
+    }
+    static parseMessage(message) {
+        if (!SignIn.checkMessage(message)) return null;
+        return new SignIn();
+    }
+}
+
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
     [messageType.requestSignIn, RequestSignIn],
+    [messageType.signIn, SignIn],
 ]);
 
 function parseMessage(message) {
@@ -92,4 +111,5 @@ module.exports = {
     Unknown: Unknown,
     Hello: Hello,
     RequestSignIn: RequestSignIn,
+    SignIn: SignIn,
 };
