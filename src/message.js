@@ -1,5 +1,6 @@
 const messageType = {
     hello: 'HeLlO',
+    requestSignIn: 'ReQsIgNiN',
 };
 
 class Unknown {
@@ -31,9 +32,23 @@ class Hello extends Unknown {
     }
 }
 
+class RequestSignIn extends Unknown {
+    constructor(playerName) {
+        super(messageType.requestSignIn);
+        this._playerName = playerName;
+    }
+    get playerName() {
+        return this._playerName;
+    }
+    sendProps() {
+        return super.sendProps({ playerName: this.playerName });
+    }
+}
+
 
 module.exports = {
     Type: messageType,
     Unknown: Unknown,
     Hello: Hello,
+    RequestSignIn: RequestSignIn,
 };
