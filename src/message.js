@@ -22,7 +22,7 @@ class Unknown {
     }
 
     static checkMessage(message, type = undefined) {
-        return ('type' in message) && (typeof message.type === 'string') && (message.type === type);
+        return message && ('type' in message) && (typeof message.type === 'string') && (message.type === type);
     }
     static parseMessage(message, type = undefined) {
         if (!Unknown.checkMessage(message)) return null;
@@ -98,9 +98,20 @@ const typeMessageMap = new Map([
 ]);
 
 function parseMessage(message) {
-    if (!('type' in message) || !(typeof message.type === 'string') || (message.type.length <= 0)) return null;
-    const msgClass = typeMessageMap.get(message.type)
-    return msgClass ? msgClass.parseMessage(message) : null;
+    function getData(message) {
+        let data;
+        try {
+            if (!("data" in message) || (typeof message.data !== 'string')) return null; // メッセージにオブジェクト以外が渡された時を考えてtry内に入れます
+            data = JSON.parse(message.data);
+        } catch (e) {
+            data = null;
+        }
+        return data;
+    }
+    const msg = getData(message);
+    if (!msg || !('type' in msg) || !(typeof msg.type === 'string') || (msg.type.length <= 0)) return null;
+    const msgClass = typeMessageMap.get(msg.type)
+    return msgClass ? msgClass.parseMessage(msg) : null;
 }
 
 
