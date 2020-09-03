@@ -73,10 +73,22 @@ class RequestSignIn extends Unknown {
     }
 }
 
+const typeMessageMap = new Map([
+    [messageType.hello, Hello],
+    [messageType.requestSignIn, RequestSignIn],
+]);
+
+function parseMessage(message) {
+    if (!('type' in message) || !(typeof message.type === 'string') || (message.type.length <= 0)) return null;
+    const msgClass = typeMessageMap.get(message.type)
+    return msgClass ? msgClass.parseMessage(message) : null;
+}
+
 
 module.exports = {
     Type: messageType,
     playerNameMaxLength: playerNameMaxLength,
+    parseMessage: parseMessage,
     Unknown: Unknown,
     Hello: Hello,
     RequestSignIn: RequestSignIn,
