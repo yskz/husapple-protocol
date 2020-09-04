@@ -2,6 +2,13 @@ const messageType = {
     hello: 'HeLlO',
     requestSignIn: 'ReQsIgNiN',
     signIn: 'SiGnIn',
+    matching: {
+        requestJoin: 'MaTcH_ReQjOiN',
+        allowJoin: 'MaTcH_AlLoWjOiN',
+        denyJoin: 'MaTcH_DeNyJoIn',
+        updatePlayers: 'MaTcH_UpDaTePlaYeRs',
+        readyGame: 'MaTcH_ReAdY',
+    },
 };
 
 const playerNameMaxLength = 64;
@@ -91,10 +98,123 @@ class SignIn extends Unknown {
     }
 }
 
+const Matching = {};
+
+Matching.RequestJoin = class extends Unknown {
+    constructor() {
+        super(messageType.matching.requestJoin);
+    }
+    sendProps() {
+        return super.sendProps({});
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.requestJoin);
+    }
+    static parseMessage(message) {
+        if (!Matching.RequestJoin.checkMessage(message)) return null;
+        return new Matching.RequestJoin();
+    }
+}
+
+Matching.AllowJoin = class extends Unknown {
+    constructor(players = []) {
+        super(messageType.matching.allowJoin);
+        this._players = players;
+    }
+
+    getPlayers() {
+        return this._players;
+    }
+    setPlayers(players = []) {
+        this._players = players;
+    }
+
+    sendProps() {
+        return super.sendProps({ players: this.getPlayers() });
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.allowJoin) &&
+            ('players' in message) && (Array.isArray(message.players));
+    }
+    static parseMessage(message) {
+        if (!Matching.AllowJoin.checkMessage(message)) return null;
+        return new Matching.AllowJoin(message.players);
+    }
+}
+
+Matching.DenyJoin = class extends Unknown {
+    constructor() {
+        super(messageType.matching.denyJoin);
+    }
+    sendProps() {
+        return super.sendProps({});
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.denyJoin);
+    }
+    static parseMessage(message) {
+        if (!Matching.DenyJoin.checkMessage(message)) return null;
+        return new Matching.DenyJoin();
+    }
+}
+
+Matching.UpdatePlayers = class extends Unknown {
+    constructor(players = []) {
+        super(messageType.matching.updatePlayers);
+        this._players = players;
+    }
+
+    getPlayers() {
+        return this._players;
+    }
+    setPlayers(players = []) {
+        this._players = players;
+    }
+
+    sendProps() {
+        return super.sendProps({ players: this.getPlayers() });
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.updatePlayers) &&
+            ('players' in message) && (Array.isArray(message.players));
+    }
+    static parseMessage(message) {
+        if (!Matching.UpdatePlayers.checkMessage(message)) return null;
+        return new Matching.UpdatePlayers(message.players);
+    }
+}
+
+Matching.ReadyGame = class extends Unknown {
+    constructor() {
+        super(messageType.matching.readyGame);
+    }
+    sendProps() {
+        return super.sendProps({});
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.readyGame);
+    }
+    static parseMessage(message) {
+        if (!Matching.ReadyGame.checkMessage(message)) return null;
+        return new Matching.ReadyGame();
+    }
+}
+
+
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
     [messageType.requestSignIn, RequestSignIn],
     [messageType.signIn, SignIn],
+    [messageType.matching.requestJoin, Matching.RequestJoin],
+    [messageType.matching.allowJoin, Matching.AllowJoin],
+    [messageType.matching.denyJoin, Matching.DenyJoin],
+    [messageType.matching.updatePlayers, Matching.UpdatePlayers],
+    [messageType.matching.readyGame, Matching.ReadyGame],
 ]);
 
 function parseMessage(message) {
@@ -123,4 +243,5 @@ module.exports = {
     Hello: Hello,
     RequestSignIn: RequestSignIn,
     SignIn: SignIn,
+    Matching: Matching,
 };
