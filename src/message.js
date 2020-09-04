@@ -4,6 +4,7 @@ const messageType = {
     signIn: 'SiGnIn',
     matching: {
         requestJoin: 'MaTcH_ReQjOiN',
+        allowJoin: 'MaTcH_AlLoWjOiN',
     },
 };
 
@@ -112,11 +113,41 @@ Matching.RequestJoin = class extends Unknown {
         return new Matching.RequestJoin();
     }
 }
+
+Matching.AllowJoin = class extends Unknown {
+    constructor(players = []) {
+        super(messageType.matching.allowJoin);
+        this._players = players;
+    }
+
+    getPlayers() {
+        return this._players;
+    }
+    setPlayers(players = []) {
+        this._players = players;
+    }
+
+    sendProps() {
+        return super.sendProps({ players: this.getPlayers() });
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.allowJoin) &&
+            ('players' in message) && (Array.isArray(message.players));
+    }
+    static parseMessage(message) {
+        if (!Matching.AllowJoin.checkMessage(message)) return null;
+        return new Matching.AllowJoin(message.players);
+    }
+}
+
+
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
     [messageType.requestSignIn, RequestSignIn],
     [messageType.signIn, SignIn],
     [messageType.matching.requestJoin, Matching.RequestJoin],
+    [messageType.matching.allowJoin, Matching.AllowJoin],
 ]);
 
 function parseMessage(message) {
