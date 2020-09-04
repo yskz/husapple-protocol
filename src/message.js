@@ -2,6 +2,9 @@ const messageType = {
     hello: 'HeLlO',
     requestSignIn: 'ReQsIgNiN',
     signIn: 'SiGnIn',
+    matching: {
+        requestJoin: 'MaTcH_ReQjOiN',
+    },
 };
 
 const playerNameMaxLength = 64;
@@ -91,10 +94,29 @@ class SignIn extends Unknown {
     }
 }
 
+const Matching = {};
+
+Matching.RequestJoin = class extends Unknown {
+    constructor() {
+        super(messageType.matching.requestJoin);
+    }
+    sendProps() {
+        return super.sendProps({});
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.requestJoin);
+    }
+    static parseMessage(message) {
+        if (!Matching.RequestJoin.checkMessage(message)) return null;
+        return new Matching.RequestJoin();
+    }
+}
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
     [messageType.requestSignIn, RequestSignIn],
     [messageType.signIn, SignIn],
+    [messageType.matching.requestJoin, Matching.RequestJoin],
 ]);
 
 function parseMessage(message) {
@@ -123,4 +145,5 @@ module.exports = {
     Hello: Hello,
     RequestSignIn: RequestSignIn,
     SignIn: SignIn,
+    Matching: Matching,
 };
