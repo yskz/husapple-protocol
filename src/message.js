@@ -5,6 +5,7 @@ const messageType = {
     matching: {
         requestJoin: 'MaTcH_ReQjOiN',
         allowJoin: 'MaTcH_AlLoWjOiN',
+        denyJoin: 'MaTcH_DeNyJoIn',
     },
 };
 
@@ -141,6 +142,23 @@ Matching.AllowJoin = class extends Unknown {
     }
 }
 
+Matching.DenyJoin = class extends Unknown {
+    constructor() {
+        super(messageType.matching.denyJoin);
+    }
+    sendProps() {
+        return super.sendProps({});
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.denyJoin);
+    }
+    static parseMessage(message) {
+        if (!Matching.DenyJoin.checkMessage(message)) return null;
+        return new Matching.DenyJoin();
+    }
+}
+
 
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
@@ -148,6 +166,7 @@ const typeMessageMap = new Map([
     [messageType.signIn, SignIn],
     [messageType.matching.requestJoin, Matching.RequestJoin],
     [messageType.matching.allowJoin, Matching.AllowJoin],
+    [messageType.matching.denyJoin, Matching.DenyJoin],
 ]);
 
 function parseMessage(message) {
