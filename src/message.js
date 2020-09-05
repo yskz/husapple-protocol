@@ -5,8 +5,7 @@ const messageType = {
     responseSignIn: 'ReSsIgNiN',
     matching: {
         requestJoin: 'MaTcH_ReQjOiN',
-        allowJoin: 'MaTcH_AlLoWjOiN',
-        denyJoin: 'MaTcH_DeNyJoIn',
+        responseJoin: 'MaTcH_ReSjOiN',
         updatePlayers: 'MaTcH_UpDaTePlaYeRs',
         requestReadyGame: 'MaTcH_ReQrEaDy',
         responseReadyGame: 'MaTcH_ReSrEaDy',
@@ -195,12 +194,19 @@ Matching.RequestJoin = class extends RequestBase {
     }
 }
 
-Matching.AllowJoin = class extends Unknown {
-    constructor(playerInfos = []) {
-        super(messageType.matching.allowJoin);
+Matching.ResponseJoin = class extends ResponseBase {
+    constructor(requestId, allow, playerInfos = []) {
+        super(messageType.matching.responseJoin, requestId);
+        this._allow = allow;
         this._playerInfos = playerInfos;
     }
 
+    isAllow() {
+        return this._allow;
+    }
+    setAllow(allow) {
+        this._allow = allow;
+    }
     getPlayerInfos() {
         return this._playerInfos;
     }
@@ -209,11 +215,14 @@ Matching.AllowJoin = class extends Unknown {
     }
 
     sendProps() {
-        return super.sendProps({ players: this.getPlayerInfos().map(info => { return { id: info.id, name: info.name }; }) });
+        const allow = this.isAllow();
+        const playerInfos = allow ? this.getPlayerInfos() : [];
+        return super.sendProps({ allow: allow, players: playerInfos().map(info => { return { id: info.id, name: info.name }; }) });
     }
 
     static checkMessage(message) {
-        return super.checkMessage(message, messageType.matching.allowJoin) &&
+        return super.checkMessage(message, messageType.matching.responseJoin) &&
+            ('allow' in message) && (typeof message.allow === 'boolean') &&
             ('players' in message) && (Array.isArray(message.players)) &&
             (message.players.findIndex(v => {
                 return !('id' in v) || !('name' in v) || (typeof v.name !== 'string') || (v.name.length <= 0);
@@ -221,24 +230,7 @@ Matching.AllowJoin = class extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
-    }
-}
-
-Matching.DenyJoin = class extends Unknown {
-    constructor() {
-        super(messageType.matching.denyJoin);
-    }
-    sendProps() {
-        return super.sendProps({});
-    }
-
-    static checkMessage(message) {
-        return super.checkMessage(message, messageType.matching.denyJoin);
-    }
-    static parseMessage(message) {
-        if (!this.checkMessage(message)) return null;
-        return new this();
+        return new this(message.requestId, message.allow, message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
     }
 }
 
@@ -312,8 +304,7 @@ const typeMessageMap = new Map([
     [messageType.requestSignIn, RequestSignIn],
     [messageType.responseSignIn, ResponseSignIn],
     [messageType.matching.requestJoin, Matching.RequestJoin],
-    [messageType.matching.allowJoin, Matching.AllowJoin],
-    [messageType.matching.denyJoin, Matching.DenyJoin],
+    [messageType.matching.responseJoin, Matching.ResponseJoin],
     [messageType.matching.updatePlayers, Matching.UpdatePlayers],
     [messageType.matching.requestReadyGame, Matching.RequestReadyGame],
     [messageType.matching.responseReadyGame, Matching.ResponseReadyGame],
