@@ -139,6 +139,19 @@ class SignIn extends Unknown {
 
 const Matching = {};
 
+Matching.PlayerInfo = class {
+    constructor(id, name) {
+        this._id = id;
+        this._name = name;
+    }
+    get id() {
+        return this._id;
+    }
+    get name() {
+        return this._name;
+    }
+}
+
 Matching.RequestJoin = class extends Unknown {
     constructor() {
         super(messageType.matching.requestJoin);
@@ -157,29 +170,32 @@ Matching.RequestJoin = class extends Unknown {
 }
 
 Matching.AllowJoin = class extends Unknown {
-    constructor(players = []) {
+    constructor(playerInfos = []) {
         super(messageType.matching.allowJoin);
-        this._players = players;
+        this._playerInfos = playerInfos;
     }
 
-    getPlayers() {
-        return this._players;
+    getPlayerInfos() {
+        return this._playerInfos;
     }
-    setPlayers(players = []) {
-        this._players = players;
+    setPlayerInfos(playerInfos = []) {
+        this._playerInfos = playerInfos;
     }
 
     sendProps() {
-        return super.sendProps({ players: this.getPlayers() });
+        return super.sendProps({ players: this.getPlayerInfos().map(info => { return { id: info.id, name: info.name }; }) });
     }
 
     static checkMessage(message) {
         return Unknown.checkMessage(message, messageType.matching.allowJoin) &&
-            ('players' in message) && (Array.isArray(message.players));
+            ('players' in message) && (Array.isArray(message.players)) &&
+            (message.players.findIndex(v => {
+                return !('id' in v) || !('name' in v) || (typeof v.name !== 'string') || (v.name.length <= 0);
+            }) < 0);
     }
     static parseMessage(message) {
         if (!Matching.AllowJoin.checkMessage(message)) return null;
-        return new Matching.AllowJoin(message.players);
+        return new Matching.AllowJoin(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
     }
 }
 
@@ -201,29 +217,32 @@ Matching.DenyJoin = class extends Unknown {
 }
 
 Matching.UpdatePlayers = class extends Unknown {
-    constructor(players = []) {
+    constructor(playerInfos = []) {
         super(messageType.matching.updatePlayers);
-        this._players = players;
+        this._playerInfos = playerInfos;
     }
 
-    getPlayers() {
-        return this._players;
+    getPlayerInfos() {
+        return this._playerInfos;
     }
-    setPlayers(players = []) {
-        this._players = players;
+    setPlayerInfos(playerInfos = []) {
+        this._playerInfos = playerInfos;
     }
 
     sendProps() {
-        return super.sendProps({ players: this.getPlayers() });
+        return super.sendProps({ players: this.getPlayerInfos().map(info => { return { id: info.id, name: info.name }; }) });
     }
 
     static checkMessage(message) {
         return Unknown.checkMessage(message, messageType.matching.updatePlayers) &&
-            ('players' in message) && (Array.isArray(message.players));
+            ('players' in message) && (Array.isArray(message.players)) &&
+            (message.players.findIndex(v => {
+                return !('id' in v) || !('name' in v) || (typeof v.name !== 'string') || (v.name.length <= 0);
+            }) < 0);
     }
     static parseMessage(message) {
         if (!Matching.UpdatePlayers.checkMessage(message)) return null;
-        return new Matching.UpdatePlayers(message.players);
+        return new Matching.UpdatePlayers(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
     }
 }
 
