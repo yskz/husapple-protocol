@@ -2,7 +2,7 @@ const messageType = {
     error: 'ErRoR',
     hello: 'HeLlO',
     requestSignIn: 'ReQsIgNiN',
-    signIn: 'SiGnIn',
+    responseSignIn: 'ReSsIgNiN',
     matching: {
         requestJoin: 'MaTcH_ReQjOiN',
         allowJoin: 'MaTcH_AlLoWjOiN',
@@ -146,20 +146,20 @@ class RequestSignIn extends RequestBase {
     }
 }
 
-class SignIn extends Unknown {
-    constructor() {
-        super(messageType.signIn);
+class ResponseSignIn extends ResponseBase {
+    constructor(requestId) {
+        super(messageType.responseSignIn, requestId);
     }
     sendProps() {
         return super.sendProps({});
     }
 
     static checkMessage(message) {
-        return super.checkMessage(message, messageType.signIn);
+        return super.checkMessage(message, messageType.responseSignIn);
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this();
+        return new this(message.requestId);
     }
 }
 
@@ -310,7 +310,7 @@ Matching.ResponseReadyGame = class extends ResponseBase {
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
     [messageType.requestSignIn, RequestSignIn],
-    [messageType.signIn, SignIn],
+    [messageType.responseSignIn, ResponseSignIn],
     [messageType.matching.requestJoin, Matching.RequestJoin],
     [messageType.matching.allowJoin, Matching.AllowJoin],
     [messageType.matching.denyJoin, Matching.DenyJoin],
@@ -346,6 +346,6 @@ module.exports = {
     Error: Error,
     Hello: Hello,
     RequestSignIn: RequestSignIn,
-    SignIn: SignIn,
+    ResponseSignIn: ResponseSignIn,
     Matching: Matching,
 };
