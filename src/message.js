@@ -99,6 +99,30 @@ class Hello extends Unknown {
     }
 }
 
+class HaveRequestId extends Unknown {
+    constructor(type, requestId) {
+        super(type);
+        this._reqId = requestId;
+    }
+
+    get requestId() {
+        return this._reqId;
+    }
+    sendProps(mergeProps = {}) {
+        return super.sendProps(Object.assign(mergeProps, { requestId: this.requestId }));
+    }
+
+    static checkMessage(message, type = undefined) {
+        return super.checkMessage(message, type) && ('requestId' in message) && (typeof message.requestId === 'number');
+    }
+    static parseMessage(message, type = undefined) {
+        if (!this.checkMessage(message)) return null;
+        return new this(type, message.requestId);
+    }
+}
+
+class RequestBase extends HaveRequestId {}
+
 class RequestSignIn extends Unknown {
     constructor(playerName) {
         super(messageType.requestSignIn);
