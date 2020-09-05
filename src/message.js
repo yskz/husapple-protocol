@@ -34,7 +34,7 @@ class Unknown {
         return message && ('type' in message) && (typeof message.type === 'string') && (message.type === type);
     }
     static parseMessage(message, type = undefined) {
-        if (!Unknown.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Unknown(type);
     }
 }
@@ -68,11 +68,11 @@ class Error extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.hello) &&
+        return super.checkMessage(message, messageType.hello) &&
             ('errorId' in message) && (typeof message.errorId === 'number') && errorIdSet.has(message.errorId);
     }
     static parseMessage(message) {
-        if (!Error.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Error(message.errorId);
     }
 }
@@ -90,11 +90,11 @@ class Hello extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.hello) &&
+        return super.checkMessage(message, messageType.hello) &&
             ('identify' in message) && (typeof message.identify === 'string') && (message.identify === Hello.identify);
     }
     static parseMessage(message) {
-        if (!Hello.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Hello();
     }
 }
@@ -112,11 +112,11 @@ class RequestSignIn extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.requestSignIn) &&
+        return super.checkMessage(message, messageType.requestSignIn) &&
             ('playerName' in message) && (typeof message.playerName === 'string') && (0 < message.playerName.length) && (message.playerName.length <= playerNameMaxLength);
     }
     static parseMessage(message) {
-        if (!RequestSignIn.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new RequestSignIn(message.playerName);
     }
 }
@@ -130,10 +130,10 @@ class SignIn extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.signIn);
+        return super.checkMessage(message, messageType.signIn);
     }
     static parseMessage(message) {
-        if (!SignIn.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new SignIn();
     }
 }
@@ -162,10 +162,10 @@ Matching.RequestJoin = class extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.matching.requestJoin);
+        return super.checkMessage(message, messageType.matching.requestJoin);
     }
     static parseMessage(message) {
-        if (!Matching.RequestJoin.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Matching.RequestJoin();
     }
 }
@@ -188,14 +188,14 @@ Matching.AllowJoin = class extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.matching.allowJoin) &&
+        return super.checkMessage(message, messageType.matching.allowJoin) &&
             ('players' in message) && (Array.isArray(message.players)) &&
             (message.players.findIndex(v => {
                 return !('id' in v) || !('name' in v) || (typeof v.name !== 'string') || (v.name.length <= 0);
             }) < 0);
     }
     static parseMessage(message) {
-        if (!Matching.AllowJoin.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Matching.AllowJoin(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
     }
 }
@@ -209,10 +209,10 @@ Matching.DenyJoin = class extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.matching.denyJoin);
+        return super.checkMessage(message, messageType.matching.denyJoin);
     }
     static parseMessage(message) {
-        if (!Matching.DenyJoin.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Matching.DenyJoin();
     }
 }
@@ -235,14 +235,14 @@ Matching.UpdatePlayers = class extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.matching.updatePlayers) &&
+        return super.checkMessage(message, messageType.matching.updatePlayers) &&
             ('players' in message) && (Array.isArray(message.players)) &&
             (message.players.findIndex(v => {
                 return !('id' in v) || !('name' in v) || (typeof v.name !== 'string') || (v.name.length <= 0);
             }) < 0);
     }
     static parseMessage(message) {
-        if (!Matching.UpdatePlayers.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Matching.UpdatePlayers(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
     }
 }
@@ -256,10 +256,10 @@ Matching.RequestReadyGame = class extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.matching.requestReadyGame);
+        return super.checkMessage(message, messageType.matching.requestReadyGame);
     }
     static parseMessage(message) {
-        if (!Matching.RequestReadyGame.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Matching.RequestReadyGame();
     }
 }
@@ -273,10 +273,10 @@ Matching.AcceptReadyGame = class extends Unknown {
     }
 
     static checkMessage(message) {
-        return Unknown.checkMessage(message, messageType.matching.acceptReadyGame);
+        return super.checkMessage(message, messageType.matching.acceptReadyGame);
     }
     static parseMessage(message) {
-        if (!Matching.AcceptReadyGame.checkMessage(message)) return null;
+        if (!this.checkMessage(message)) return null;
         return new Matching.AcceptReadyGame();
     }
 }
