@@ -141,7 +141,7 @@ class RequestSignIn extends RequestBase {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this(message.playerName);
+        return new this(message.requestId, message.playerName);
     }
 }
 
@@ -190,7 +190,7 @@ Matching.RequestJoin = class extends RequestBase {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this();
+        return new this(message.requestId);
     }
 }
 
@@ -277,7 +277,7 @@ Matching.RequestReadyGame = class extends RequestBase {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this();
+        return new this(message.requestId);
     }
 }
 
