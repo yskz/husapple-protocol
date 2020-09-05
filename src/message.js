@@ -124,9 +124,9 @@ class HaveRequestId extends Unknown {
 class RequestBase extends HaveRequestId {}
 class ResponseBase extends HaveRequestId {}
 
-class RequestSignIn extends Unknown {
-    constructor(playerName) {
-        super(messageType.requestSignIn);
+class RequestSignIn extends RequestBase {
+    constructor(requestId, playerName) {
+        super(messageType.requestSignIn, requestId);
         this._playerName = playerName;
     }
     get playerName() {
@@ -178,9 +178,9 @@ Matching.PlayerInfo = class {
     }
 }
 
-Matching.RequestJoin = class extends Unknown {
-    constructor() {
-        super(messageType.matching.requestJoin);
+Matching.RequestJoin = class extends RequestBase {
+    constructor(requestId) {
+        super(messageType.matching.requestJoin, requestId);
     }
     sendProps() {
         return super.sendProps({});
@@ -272,9 +272,9 @@ Matching.UpdatePlayers = class extends Unknown {
     }
 }
 
-Matching.RequestReadyGame = class extends Unknown {
-    constructor() {
-        super(messageType.matching.requestReadyGame);
+Matching.RequestReadyGame = class extends RequestBase {
+    constructor(requestId) {
+        super(messageType.matching.requestReadyGame, requestId);
     }
     sendProps() {
         return super.sendProps({});
