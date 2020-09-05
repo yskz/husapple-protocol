@@ -122,6 +122,7 @@ class HaveRequestId extends Unknown {
 }
 
 class RequestBase extends HaveRequestId {}
+class ResponseBase extends HaveRequestId {}
 
 class RequestSignIn extends Unknown {
     constructor(playerName) {
