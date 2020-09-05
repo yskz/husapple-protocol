@@ -35,7 +35,7 @@ class Unknown {
     }
     static parseMessage(message, type = undefined) {
         if (!this.checkMessage(message)) return null;
-        return new Unknown(type);
+        return new this(type);
     }
 }
 
@@ -73,7 +73,7 @@ class Error extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Error(message.errorId);
+        return new this(message.errorId);
     }
 }
 
@@ -95,7 +95,7 @@ class Hello extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Hello();
+        return new this();
     }
 }
 
@@ -117,7 +117,7 @@ class RequestSignIn extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new RequestSignIn(message.playerName);
+        return new this(message.playerName);
     }
 }
 
@@ -134,7 +134,7 @@ class SignIn extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new SignIn();
+        return new this();
     }
 }
 
@@ -166,7 +166,7 @@ Matching.RequestJoin = class extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Matching.RequestJoin();
+        return new this();
     }
 }
 
@@ -196,7 +196,7 @@ Matching.AllowJoin = class extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Matching.AllowJoin(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
+        return new this(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
     }
 }
 
@@ -213,7 +213,7 @@ Matching.DenyJoin = class extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Matching.DenyJoin();
+        return new this();
     }
 }
 
@@ -243,7 +243,7 @@ Matching.UpdatePlayers = class extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Matching.UpdatePlayers(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
+        return new this(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
     }
 }
 
@@ -260,7 +260,7 @@ Matching.RequestReadyGame = class extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Matching.RequestReadyGame();
+        return new this();
     }
 }
 
@@ -277,7 +277,7 @@ Matching.AcceptReadyGame = class extends Unknown {
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new Matching.AcceptReadyGame();
+        return new this();
     }
 }
 
