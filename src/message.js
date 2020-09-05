@@ -50,6 +50,7 @@ const createErrorId = (function () {
 const errorId = {
     unknown: createErrorId(),
     serverBug: createErrorId(),
+    invalidMessage: createErrorId(),
 };
 const errorIdSet = new Set(Object.keys(errorId).map(k => errorId[k]));
 
