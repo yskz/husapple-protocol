@@ -9,6 +9,7 @@ const messageType = {
         denyJoin: 'MaTcH_DeNyJoIn',
         updatePlayers: 'MaTcH_UpDaTePlaYeRs',
         requestReadyGame: 'MaTcH_ReQrEaDy',
+        acceptReadyGame: 'MaTcH_AcCePtReAdY',
     },
 };
 
@@ -263,6 +264,23 @@ Matching.RequestReadyGame = class extends Unknown {
     }
 }
 
+Matching.AcceptReadyGame = class extends Unknown {
+    constructor() {
+        super(messageType.matching.acceptReadyGame);
+    }
+    sendProps() {
+        return super.sendProps({});
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.matching.acceptReadyGame);
+    }
+    static parseMessage(message) {
+        if (!Matching.AcceptReadyGame.checkMessage(message)) return null;
+        return new Matching.AcceptReadyGame();
+    }
+}
+
 
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
@@ -273,6 +291,7 @@ const typeMessageMap = new Map([
     [messageType.matching.denyJoin, Matching.DenyJoin],
     [messageType.matching.updatePlayers, Matching.UpdatePlayers],
     [messageType.matching.requestReadyGame, Matching.RequestReadyGame],
+    [messageType.matching.acceptReadyGame, Matching.AcceptReadyGame],
 ]);
 
 function parseMessage(message) {
