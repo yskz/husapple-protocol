@@ -1,4 +1,5 @@
 const messageType = {
+    error: 'ErRoR',
     hello: 'HeLlO',
     requestSignIn: 'ReQsIgNiN',
     signIn: 'SiGnIn',
@@ -34,6 +35,43 @@ class Unknown {
     static parseMessage(message, type = undefined) {
         if (!Unknown.checkMessage(message)) return null;
         return new Unknown(type);
+    }
+}
+
+const createErrorId = (function () {
+    let index = -1;
+    return () => {
+        const id = index;
+        index -= 1;
+        return id;
+    };
+})();
+
+const errorId = {
+    unknown: createErrorId(),
+    serverBug: createErrorId(),
+};
+const errorIdSet = new Set(Object.keys(errorId).map(k => errorId[k]));
+
+class Error extends Unknown {
+    constructor(errorId) {
+        super(messageType.error);
+        this._errorId = errorId;
+    }
+    get errorId() {
+        return this._errorId;
+    }
+    sendProps() {
+        return super.sendProps({ errorId: this.errorId });
+    }
+
+    static checkMessage(message) {
+        return Unknown.checkMessage(message, messageType.hello) &&
+            ('errorId' in message) && (typeof message.errorId === 'number') && errorIdSet.has(message.errorId);
+    }
+    static parseMessage(message) {
+        if (!Error.checkMessage(message)) return null;
+        return new Error(message.errorId);
     }
 }
 
@@ -238,8 +276,10 @@ function parseMessage(message) {
 module.exports = {
     Type: messageType,
     playerNameMaxLength: playerNameMaxLength,
+    ErrorId: errorId,
     parseMessage: parseMessage,
     Unknown: Unknown,
+    Error: Error,
     Hello: Hello,
     RequestSignIn: RequestSignIn,
     SignIn: SignIn,
