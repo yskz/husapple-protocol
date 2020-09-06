@@ -179,6 +179,16 @@ Matching.PlayerInfo = class {
     get isSelf() {
         return this._self;
     }
+
+    getSendProps() {
+        return { id: this.id, name: this.name, isSelf: this.isSelf };
+    }
+    static checkProps(obj) {
+        return ('id' in obj) && ('name' in obj) && (typeof obj.name === 'string') && (obj.name.length > 0) && ('isSelf' in obj) && (typeof obj.isSelf === 'boolean');
+    }
+    static createFromObject(obj) {
+        return new this(obj.id, obj.name, obj.isSelf);
+    }
 }
 
 Matching.RequestJoin = class extends RequestBase {
