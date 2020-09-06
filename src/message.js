@@ -231,20 +231,18 @@ Matching.ResponseJoin = class extends ResponseBase {
     sendProps() {
         const allow = this.isAllow();
         const playerInfos = allow ? this.getPlayerInfos() : [];
-        return super.sendProps({ allow: allow, players: playerInfos().map(info => { return { id: info.id, name: info.name }; }) });
+        return super.sendProps({ allow: allow, players: playerInfos().map(info => info.getSendProps()) });
     }
 
     static checkMessage(message) {
         return super.checkMessage(message, messageType.matching.responseJoin) &&
             ('allow' in message) && (typeof message.allow === 'boolean') &&
             ('players' in message) && (Array.isArray(message.players)) &&
-            (message.players.findIndex(v => {
-                return !('id' in v) || !('name' in v) || (typeof v.name !== 'string') || (v.name.length <= 0);
-            }) < 0);
+            (message.players.findIndex(v => !Matching.PlayerInfo.checkProps(v)) < 0);
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this(message.requestId, message.allow, message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
+        return new this(message.requestId, message.allow, message.players.map(v => Matching.PlayerInfo.createFromObject(v)));
     }
 }
 
@@ -262,19 +260,17 @@ Matching.UpdatePlayers = class extends Unknown {
     }
 
     sendProps() {
-        return super.sendProps({ players: this.getPlayerInfos().map(info => { return { id: info.id, name: info.name }; }) });
+        return super.sendProps({ players: this.getPlayerInfos().map(info => info.getSendProps()) });
     }
 
     static checkMessage(message) {
         return super.checkMessage(message, messageType.matching.updatePlayers) &&
             ('players' in message) && (Array.isArray(message.players)) &&
-            (message.players.findIndex(v => {
-                return !('id' in v) || !('name' in v) || (typeof v.name !== 'string') || (v.name.length <= 0);
-            }) < 0);
+            (message.players.findIndex(v => !Matching.PlayerInfo.checkProps(v)) < 0);
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this(message.players.map(v => new Matching.PlayerInfo(v.id, v.name)));
+        return new this(message.players.map(v => Matching.PlayerInfo.createFromObject(v)));
     }
 }
 
