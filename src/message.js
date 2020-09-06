@@ -165,15 +165,19 @@ class ResponseSignIn extends ResponseBase {
 const Matching = {};
 
 Matching.PlayerInfo = class {
-    constructor(id, name) {
+    constructor(id, name, selfFlag) {
         this._id = id;
         this._name = name;
+        this._self = selfFlag;
     }
     get id() {
         return this._id;
     }
     get name() {
         return this._name;
+    }
+    get isSelf() {
+        return this._self;
     }
 }
 
