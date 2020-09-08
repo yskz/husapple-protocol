@@ -231,7 +231,7 @@ Matching.ResponseJoin = class extends ResponseBase {
     sendProps() {
         const allow = this.isAllow();
         const playerInfos = allow ? this.getPlayerInfos() : [];
-        return super.sendProps({ allow: allow, players: playerInfos().map(info => info.getSendProps()) });
+        return super.sendProps({ allow: allow, players: playerInfos.map(info => info.getSendProps()) });
     }
 
     static checkMessage(message) {
