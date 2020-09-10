@@ -1,14 +1,14 @@
 class Player {
-    constructor(id, name, scoreCards = [], usedCards = [], bidCard = null) {
+    constructor(id, name, pointCards = [], usedCards = [], bidCard = null) {
         this.id = id;
         this.name = name;
-        this.scoreCards = scoreCards;
+        this.pointCards = pointCards;
         this.usedCards = usedCards;
         this.bidCard = bidCard;
     }
 
     getSendProps() {
-        return { id: this.id, name: this.name, scoreCards: this.scoreCards, usedCards: this.usedCards, bidCard: this.bidCard };
+        return { id: this.id, name: this.name, pointCards: this.pointCards, usedCards: this.usedCards, bidCard: this.bidCard };
     }
     static checkNumberArray(a) {
         function checkNotNum(v) {
@@ -19,18 +19,18 @@ class Player {
     static checkProps(obj) {
         return (('id' in obj) &&
                 ('name' in obj) && (typeof obj.name === 'string') && (obj.name.length > 0) &&
-                ('scoreCards' in obj) && this.checkNumberArray(obj.scoreCards) &&
+                ('pointCards' in obj) && this.checkNumberArray(obj.pointCards) &&
                 ('usedCards' in obj) && this.checkNumberArray(obj.usedCards) &&
                 ('bidCard' in obj) && ((obj.bidCard === null) || (typeof obj.bidCard === 'number')));
     }
     static createFromObject(obj) {
-        return new this(obj.name, obj.scoreCards, obj.usedCards, obj.bidCard);
+        return new this(obj.name, obj.pointCards, obj.usedCards, obj.bidCard);
     }
 }
 
 class MyPlayer extends Player {
-    constructor(id, name, myCards = [], scoreCards = [], usedCards = [], bidCard = null) {
-        super(id, name, scoreCards, usedCards, bidCard);
+    constructor(id, name, myCards = [], pointCards = [], usedCards = [], bidCard = null) {
+        super(id, name, pointCards, usedCards, bidCard);
         this.myCards = myCards;
     }
 
@@ -41,7 +41,7 @@ class MyPlayer extends Player {
         return super.checkProps(obj) && ('myCards' in obj) && (super.checkNumberArray(obj.myCards));
     }
     static createFromObject(obj) {
-        return new this(obj.name, obj.myCards, obj.scoreCards, obj.usedCards, obj.bidCard);
+        return new this(obj.name, obj.myCards, obj.pointCards, obj.usedCards, obj.bidCard);
     }
 }
 
@@ -96,8 +96,8 @@ class GameInfo {
     }
     static createFromObject(obj) {
         const srcMyPlayer = obj.myPlayer;
-        const myPlayer = new MyPlayer(srcMyPlayer.id, srcMyPlayer.name, srcMyPlayer.myCards, srcMyPlayer.scoreCards, srcMyPlayer.usedCards, srcMyPlayer.bidCard);
-        const players = obj.players.map(v => new Player(v.id, v.name, v.scoreCards, v.usedCards, v.bidCard));
+        const myPlayer = new MyPlayer(srcMyPlayer.id, srcMyPlayer.name, srcMyPlayer.myCards, srcMyPlayer.pointCards, srcMyPlayer.usedCards, srcMyPlayer.bidCard);
+        const players = obj.players.map(v => new Player(v.id, v.name, v.pointCards, v.usedCards, v.bidCard));
         const winnerCurrentTurn = obj.winnerCurrentTurn ? new WinnerCurrentTurn(obj.isDraw, obj.playerName) : null;
         return new this(myPlayer, players, obj.turnNum, obj.isBidCardOpen, winnerCurrentTurn);
     }
