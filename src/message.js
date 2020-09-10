@@ -1,3 +1,5 @@
+const GameInfo = require('./game_info').GameInfo;
+
 const messageType = {
     error: 'ErRoR',
     hello: 'HeLlO',
@@ -9,6 +11,7 @@ const messageType = {
         updatePlayers: 'MaTcH_UpDaTePlaYeRs',
         requestReadyGame: 'MaTcH_ReQrEaDy',
         responseReadyGame: 'MaTcH_ReSrEaDy',
+        gameStart: 'MaTcH_GaMeStArT',
     },
 };
 
@@ -308,6 +311,33 @@ Matching.ResponseReadyGame = class extends ResponseBase {
     }
 }
 
+Matching.GameStart = class extends Unknown {
+    constructor(gameInfo) {
+        super(messageType.matching.gameStart);
+        this._gameInfo = gameInfo;
+    }
+
+    getGameInfo() {
+        return this._gameInfo;
+    }
+    setGameInfo(gameInfo) {
+        this._gameInfo = gameInfo;
+    }
+
+    sendProps() {
+        return super.sendProps({ gameInfo: this.getGameInfo() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.matching.gameStart) &&
+            ('gameInfo' in message) && GameInfo.checkProps(message.gameInfo);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(GameInfo.createFromObject(message.gameInfo));
+    }
+}
+
 
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
@@ -318,6 +348,7 @@ const typeMessageMap = new Map([
     [messageType.matching.updatePlayers, Matching.UpdatePlayers],
     [messageType.matching.requestReadyGame, Matching.RequestReadyGame],
     [messageType.matching.responseReadyGame, Matching.ResponseReadyGame],
+    [messageType.matching.gameStart, Matching.GameStart],
 ]);
 
 function parseMessage(message) {
