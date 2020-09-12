@@ -16,6 +16,7 @@ const messageType = {
     game: {
         requestBid: 'GaMe_ReQbId',
         responseBid: 'GaMe_ReSbId',
+        updatePlayerBidStatus: 'GaMe_UpDaTePlAyErBiD',
     },
 };
 
@@ -409,6 +410,41 @@ Game.ResponseBid.ResultCode = {
     alreadyBid: -1,
 };
 
+Game.UpdatePlayerBidStatus = class extends Unknown {
+    constructor(turnNum, playerId) {
+        super(messageType.game.updatePlayerBidStatus);
+        this._turnNum = turnNum;
+        this._playerId = playerId;
+    }
+
+    getTurnNum() {
+        return this._turnNum;
+    }
+    setTurnNum(num) {
+        this._turnNum = num;
+    }
+    getPlayerId() {
+        return this._playerId;
+    }
+    setPlayerId(id) {
+        this._playerId = id;
+    }
+
+    sendProps() {
+        return super.sendProps({ turnNum: this.getTurnNum(), playerId: this.getPlayerId() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.updatePlayerBidStatus) &&
+            ('turnNum' in message) && (typeof message.turnNum === 'number') &&
+            ('playerId' in message) && (message.playerId !== null);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.turnNum, message.playerId);
+    }
+}
+
 
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
@@ -422,6 +458,7 @@ const typeMessageMap = new Map([
     [messageType.matching.gameStart, Matching.GameStart],
     [messageType.game.requestBid, Game.RequestBid],
     [messageType.game.responseBid, Game.ResponseBid],
+    [messageType.game.updatePlayerBidStatus, Game.UpdatePlayerBidStatus],
 ]);
 
 function parseMessage(message) {
