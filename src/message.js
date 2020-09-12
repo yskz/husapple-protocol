@@ -13,6 +13,9 @@ const messageType = {
         responseReadyGame: 'MaTcH_ReSrEaDy',
         gameStart: 'MaTcH_GaMeStArT',
     },
+    game: {
+        requestBid: 'GaMe_ReQbId',
+    },
 };
 
 const playerNameMaxLength = 64;
@@ -338,6 +341,42 @@ Matching.GameStart = class extends Unknown {
     }
 }
 
+const Game = {};
+
+Game.RequestBid = class extends RequestBase {
+    constructor(requestId, turnNum, bidCard) {
+        super(messageType.game.requestBid, requestId);
+        this._turnNum = turnNum;
+        this._bidCard = bidCard;
+    }
+    sendProps() {
+        return super.sendProps({ turnNum: this.getTurnNum(), bidCard: this.getBidCard() });
+    }
+
+    getTurnNum() {
+        return this._turnNum;
+    }
+    setTurnNum(num) {
+        this._turnNum = num;
+    }
+    getBidCard() {
+        return this._bidCard;
+    }
+    setBidCard(bidCard) {
+        this._bidCard = bidCard;
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.requestBid) &&
+            ('turnNum' in message) && (typeof message.turnNum === 'number') &&
+            ('bidCard' in message) && (typeof message.bidCard === 'number');
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.requestId, message.turnNum, message.bidCard);
+    }
+}
+
 
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
@@ -349,6 +388,7 @@ const typeMessageMap = new Map([
     [messageType.matching.requestReadyGame, Matching.RequestReadyGame],
     [messageType.matching.responseReadyGame, Matching.ResponseReadyGame],
     [messageType.matching.gameStart, Matching.GameStart],
+    [messageType.game.requestBid, Game.RequestBid],
 ]);
 
 function parseMessage(message) {
@@ -380,4 +420,5 @@ module.exports = {
     RequestSignIn: RequestSignIn,
     ResponseSignIn: ResponseSignIn,
     Matching: Matching,
+    Game: Game,
 };
