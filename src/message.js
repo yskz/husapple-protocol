@@ -18,6 +18,7 @@ const messageType = {
         responseBid: 'GaMe_ReSbId',
         updatePlayerBidStatus: 'GaMe_UpDaTePlAyErBiD',
         finishTurn: 'GaMe_FiNiShTuRn',
+        startTurn: 'GaMe_StArTtUrN',
         finishGame: 'GaMe_FiNiShGaMe',
     },
 };
@@ -474,6 +475,33 @@ Game.FinishTurn = class extends Unknown {
     }
 }
 
+Game.StartTurn = class extends Unknown {
+    constructor(gameInfo) {
+        super(messageType.game.startTurn);
+        this._gameInfo = gameInfo;
+    }
+
+    getGameInfo() {
+        return this._gameInfo;
+    }
+    setGameInfo(gameInfo) {
+        this._gameInfo = gameInfo;
+    }
+
+    sendProps() {
+        return super.sendProps({ gameInfo: this.getGameInfo().getSendProps() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.startTurn) &&
+            ('gameInfo' in message) && GameInfo.checkProps(message.gameInfo);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(GameInfo.createFromObject(message.gameInfo));
+    }
+}
+
 Game.FinishGame = class extends Unknown {
     constructor(gameInfo) {
         super(messageType.game.finishGame);
@@ -516,6 +544,7 @@ const typeMessageMap = new Map([
     [messageType.game.responseBid, Game.ResponseBid],
     [messageType.game.updatePlayerBidStatus, Game.UpdatePlayerBidStatus],
     [messageType.game.finishTurn, Game.FinishTurn],
+    [messageType.game.startTurn, Game.StartTurn],
     [messageType.game.finishGame, Game.FinishGame],
 ]);
 
