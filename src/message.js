@@ -14,6 +14,7 @@ const messageType = {
         gameStart: 'MaTcH_GaMeStArT',
     },
     game: {
+        leavePlayer: 'GaMe_LeAvEpLaYeR',
         requestBid: 'GaMe_ReQbId',
         responseBid: 'GaMe_ReSbId',
         updatePlayerBidStatus: 'GaMe_UpDaTePlAyErBiD',
@@ -348,6 +349,32 @@ Matching.GameStart = class extends Unknown {
 
 const Game = {};
 
+Game.PlayerInfo = Matching.PlayerInfo;
+
+Game.LeavePlayer = class extends Unknown {
+    constructor(playerInfo) {
+        super(messageType.game.leavePlayer);
+        this._playerInfo = playerInfo;
+    }
+
+    getPlayerInfo() {
+        return this._playerInfo;
+    }
+
+    sendProps() {
+        return super.sendProps({ playerInfo: this.getPlayerInfo().getSendProps() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.leavePlayer) &&
+            ('playerInfo' in message) && Game.PlayerInfo.checkProps(message.playerInfo);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.playerInfo);
+    }
+}
+
 Game.RequestBid = class extends RequestBase {
     constructor(requestId, turnNum, bidCard) {
         super(messageType.game.requestBid, requestId);
@@ -540,6 +567,7 @@ const typeMessageMap = new Map([
     [messageType.matching.requestReadyGame, Matching.RequestReadyGame],
     [messageType.matching.responseReadyGame, Matching.ResponseReadyGame],
     [messageType.matching.gameStart, Matching.GameStart],
+    [messageType.game.leavePlayer, Game.LeavePlayer],
     [messageType.game.requestBid, Game.RequestBid],
     [messageType.game.responseBid, Game.ResponseBid],
     [messageType.game.updatePlayerBidStatus, Game.UpdatePlayerBidStatus],
