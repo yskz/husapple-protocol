@@ -13,6 +13,15 @@ const messageType = {
         responseReadyGame: 'MaTcH_ReSrEaDy',
         gameStart: 'MaTcH_GaMeStArT',
     },
+    game: {
+        leavePlayer: 'GaMe_LeAvEpLaYeR',
+        requestBid: 'GaMe_ReQbId',
+        responseBid: 'GaMe_ReSbId',
+        updatePlayerBidStatus: 'GaMe_UpDaTePlAyErBiD',
+        finishTurn: 'GaMe_FiNiShTuRn',
+        startTurn: 'GaMe_StArTtUrN',
+        finishGame: 'GaMe_FiNiShGaMe',
+    },
 };
 
 const playerNameMaxLength = 64;
@@ -338,6 +347,215 @@ Matching.GameStart = class extends Unknown {
     }
 }
 
+const Game = {};
+
+Game.PlayerInfo = Matching.PlayerInfo;
+
+Game.LeavePlayer = class extends Unknown {
+    constructor(playerInfo) {
+        super(messageType.game.leavePlayer);
+        this._playerInfo = playerInfo;
+    }
+
+    getPlayerInfo() {
+        return this._playerInfo;
+    }
+
+    sendProps() {
+        return super.sendProps({ playerInfo: this.getPlayerInfo().getSendProps() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.leavePlayer) &&
+            ('playerInfo' in message) && Game.PlayerInfo.checkProps(message.playerInfo);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.playerInfo);
+    }
+}
+
+Game.RequestBid = class extends RequestBase {
+    constructor(requestId, turnNum, bidCard) {
+        super(messageType.game.requestBid, requestId);
+        this._turnNum = turnNum;
+        this._bidCard = bidCard;
+    }
+    sendProps() {
+        return super.sendProps({ turnNum: this.getTurnNum(), bidCard: this.getBidCard() });
+    }
+
+    getTurnNum() {
+        return this._turnNum;
+    }
+    setTurnNum(num) {
+        this._turnNum = num;
+    }
+    getBidCard() {
+        return this._bidCard;
+    }
+    setBidCard(bidCard) {
+        this._bidCard = bidCard;
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.requestBid) &&
+            ('turnNum' in message) && (typeof message.turnNum === 'number') &&
+            ('bidCard' in message) && (typeof message.bidCard === 'number');
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.requestId, message.turnNum, message.bidCard);
+    }
+}
+
+Game.ResponseBid = class extends ResponseBase {
+    constructor(requestId, resultCode) {
+        super(messageType.game.responseBid, requestId);
+        this._resultCode = resultCode;
+    }
+    sendProps() {
+        return super.sendProps({ resultCode: this.getResultCode() });
+    }
+
+    getResultCode() {
+        return this._resultCode;
+    }
+    setResultCode(resultCode) {
+        this._resultCode = resultCode;
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.responseBid) &&
+            ('resultCode' in message) && (typeof message.resultCode === 'number');
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.requestId, message.resultCode);
+    }
+}
+
+Game.ResponseBid.ResultCode = {
+    success: 0,
+    alreadyBid: -1,
+};
+
+Game.UpdatePlayerBidStatus = class extends Unknown {
+    constructor(turnNum, playerId) {
+        super(messageType.game.updatePlayerBidStatus);
+        this._turnNum = turnNum;
+        this._playerId = playerId;
+    }
+
+    getTurnNum() {
+        return this._turnNum;
+    }
+    setTurnNum(num) {
+        this._turnNum = num;
+    }
+    getPlayerId() {
+        return this._playerId;
+    }
+    setPlayerId(id) {
+        this._playerId = id;
+    }
+
+    sendProps() {
+        return super.sendProps({ turnNum: this.getTurnNum(), playerId: this.getPlayerId() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.updatePlayerBidStatus) &&
+            ('turnNum' in message) && (typeof message.turnNum === 'number') &&
+            ('playerId' in message) && (message.playerId !== null);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.turnNum, message.playerId);
+    }
+}
+
+Game.FinishTurn = class extends Unknown {
+    constructor(gameInfo) {
+        super(messageType.game.finishTurn);
+        this._gameInfo = gameInfo;
+    }
+
+    getGameInfo() {
+        return this._gameInfo;
+    }
+    setGameInfo(gameInfo) {
+        this._gameInfo = gameInfo;
+    }
+
+    sendProps() {
+        return super.sendProps({ gameInfo: this.getGameInfo().getSendProps() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.finishTurn) &&
+            ('gameInfo' in message) && GameInfo.checkProps(message.gameInfo);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(GameInfo.createFromObject(message.gameInfo));
+    }
+}
+
+Game.StartTurn = class extends Unknown {
+    constructor(gameInfo) {
+        super(messageType.game.startTurn);
+        this._gameInfo = gameInfo;
+    }
+
+    getGameInfo() {
+        return this._gameInfo;
+    }
+    setGameInfo(gameInfo) {
+        this._gameInfo = gameInfo;
+    }
+
+    sendProps() {
+        return super.sendProps({ gameInfo: this.getGameInfo().getSendProps() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.startTurn) &&
+            ('gameInfo' in message) && GameInfo.checkProps(message.gameInfo);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(GameInfo.createFromObject(message.gameInfo));
+    }
+}
+
+Game.FinishGame = class extends Unknown {
+    constructor(gameInfo) {
+        super(messageType.game.finishGame);
+        this._gameInfo = gameInfo;
+    }
+
+    getGameInfo() {
+        return this._gameInfo;
+    }
+    setGameInfo(gameInfo) {
+        this._gameInfo = gameInfo;
+    }
+
+    sendProps() {
+        return super.sendProps({ gameInfo: this.getGameInfo().getSendProps() });
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.finishGame) &&
+            ('gameInfo' in message) && GameInfo.checkProps(message.gameInfo);
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(GameInfo.createFromObject(message.gameInfo));
+    }
+}
+
 
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
@@ -349,6 +567,13 @@ const typeMessageMap = new Map([
     [messageType.matching.requestReadyGame, Matching.RequestReadyGame],
     [messageType.matching.responseReadyGame, Matching.ResponseReadyGame],
     [messageType.matching.gameStart, Matching.GameStart],
+    [messageType.game.leavePlayer, Game.LeavePlayer],
+    [messageType.game.requestBid, Game.RequestBid],
+    [messageType.game.responseBid, Game.ResponseBid],
+    [messageType.game.updatePlayerBidStatus, Game.UpdatePlayerBidStatus],
+    [messageType.game.finishTurn, Game.FinishTurn],
+    [messageType.game.startTurn, Game.StartTurn],
+    [messageType.game.finishGame, Game.FinishGame],
 ]);
 
 function parseMessage(message) {
@@ -380,4 +605,5 @@ module.exports = {
     RequestSignIn: RequestSignIn,
     ResponseSignIn: ResponseSignIn,
     Matching: Matching,
+    Game: Game,
 };
