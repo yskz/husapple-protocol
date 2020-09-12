@@ -98,7 +98,7 @@ class GameInfo {
         const srcMyPlayer = obj.myPlayer;
         const myPlayer = new MyPlayer(srcMyPlayer.id, srcMyPlayer.name, srcMyPlayer.myCards, srcMyPlayer.pointCards, srcMyPlayer.usedCards, srcMyPlayer.bidCard);
         const players = obj.players.map(v => new Player(v.id, v.name, v.pointCards, v.usedCards, v.bidCard));
-        const winnerCurrentTurn = obj.winnerCurrentTurn ? new WinnerCurrentTurn(obj.isDraw, obj.playerName) : null;
+        const winnerCurrentTurn = obj.winnerCurrentTurn ? new WinnerCurrentTurn(obj.winnerCurrentTurn.isDraw, obj.winnerCurrentTurn.playerName) : null;
         return new this(myPlayer, players, obj.turnNum, obj.isBidCardOpen, winnerCurrentTurn);
     }
 }
