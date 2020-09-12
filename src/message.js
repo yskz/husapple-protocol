@@ -15,6 +15,7 @@ const messageType = {
     },
     game: {
         requestBid: 'GaMe_ReQbId',
+        responseBid: 'GaMe_ReSbId',
     },
 };
 
@@ -377,6 +378,37 @@ Game.RequestBid = class extends RequestBase {
     }
 }
 
+Game.ResponseBid = class extends ResponseBase {
+    constructor(requestId, resultCode) {
+        super(messageType.game.responseBid, requestId);
+        this._resultCode = resultCode;
+    }
+    sendProps() {
+        return super.sendProps({ resultCode: this.getResultCode() });
+    }
+
+    getResultCode() {
+        return this._resultCode;
+    }
+    setResultCode(resultCode) {
+        this._resultCode = resultCode;
+    }
+
+    static checkMessage(message) {
+        return super.checkMessage(message, messageType.game.responseBid) &&
+            ('resultCode' in message) && (typeof message.resultCode === 'number');
+    }
+    static parseMessage(message) {
+        if (!this.checkMessage(message)) return null;
+        return new this(message.requestId, message.resultCode);
+    }
+}
+
+Game.ResponseBid.ResultCode = {
+    success: 0,
+    alreadyBid: -1,
+};
+
 
 const typeMessageMap = new Map([
     [messageType.hello, Hello],
@@ -389,6 +421,7 @@ const typeMessageMap = new Map([
     [messageType.matching.responseReadyGame, Matching.ResponseReadyGame],
     [messageType.matching.gameStart, Matching.GameStart],
     [messageType.game.requestBid, Game.RequestBid],
+    [messageType.game.responseBid, Game.ResponseBid],
 ]);
 
 function parseMessage(message) {
