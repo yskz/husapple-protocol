@@ -349,29 +349,26 @@ Matching.GameStart = class extends Unknown {
 
 const Game = {};
 
-Game.PlayerInfo = Matching.PlayerInfo;
-
 Game.LeavePlayer = class extends Unknown {
-    constructor(playerInfo) {
+    constructor(playerId) {
         super(messageType.game.leavePlayer);
-        this._playerInfo = playerInfo;
+        this._playerId = playerId;
     }
 
-    getPlayerInfo() {
-        return this._playerInfo;
+    getPlayerId() {
+        return this._playerId;
     }
-
     sendProps() {
-        return super.sendProps({ playerInfo: this.getPlayerInfo().getSendProps() });
+        return super.sendProps({ playerId: this.getPlayerId() });
     }
 
     static checkMessage(message) {
         return super.checkMessage(message, messageType.game.leavePlayer) &&
-            ('playerInfo' in message) && Game.PlayerInfo.checkProps(message.playerInfo);
+            ('playerId' in message) && message.playerId;
     }
     static parseMessage(message) {
         if (!this.checkMessage(message)) return null;
-        return new this(message.playerInfo);
+        return new this(message.playerId);
     }
 }
 
