@@ -434,7 +434,9 @@ Game.ResponseBid = class extends ResponseBase {
 
 Game.ResponseBid.ResultCode = {
     success: 0,
-    alreadyBid: -1,
+    invalidTurnNum: -1,
+    invalidBidCard: -2,
+    alreadyBid: -3,
 };
 
 Game.UpdatePlayerBidStatus = class extends Unknown {
