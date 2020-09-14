@@ -82,8 +82,10 @@ class WinnerCurrentTurn {
 }
 
 class GameInfo {
-    constructor(myPlayer, players = [], turnNum = 1, isBidCardOpen = false, winnerCurrentTurn = null) {
+    constructor(myPlayer, players = [], turnNum = 1, pointCards = [], openPointCardCount = 1, isBidCardOpen = false, winnerCurrentTurn = null) {
         this.turnNum = turnNum;
+        this.pointCards = pointCards;
+        this.openPointCardCount = openPointCardCount;
         this.myPlayer = myPlayer;
         this.players = players;
         this.isBidCardOpen = isBidCardOpen;
@@ -91,12 +93,21 @@ class GameInfo {
     }
 
     clone() {
-        return new GameInfo(this.myPlayer.clone(), this.players.map(v => v.clone()), this.turnNum, this.isBidCardOpen, this.winnerCurrentTurn ? this.winnerCurrentTurn.clone() : null);
+        return new GameInfo(
+            this.myPlayer.clone(),
+            this.players.map(v => v.clone()),
+            this.turnNum,
+            this.pointCards,
+            this.openPointCardCount,
+            this.isBidCardOpen,
+            this.winnerCurrentTurn ? this.winnerCurrentTurn.clone() : null);
     }
 
     getSendProps() {
         return {
             turnNum: this.turnNum,
+            openPointCardCount: this.openPointCardCount,
+            pointCards: this.pointCards,
             myPlayer: this.myPlayer.getSendProps(),
             players: this.players.map(v => v.getSendProps()),
             isBidCardOpen: this.isBidCardOpen,
@@ -105,6 +116,8 @@ class GameInfo {
     }
     static checkProps(obj) {
         return (('turnNum' in obj) && (typeof obj.turnNum === 'number') &&
+                ('openPointCardCount' in obj) && (typeof obj.openPointCardCount === 'number') &&
+                ('pointCards' in obj) && Array.isArray(obj.pointCards) && (obj.pointCards.findIndex(v => typeof v !== 'number') < 0) &&
                 ('myPlayer' in obj) && MyPlayer.checkProps(obj.myPlayer) &&
                 ('players' in obj) && Array.isArray(obj.players) && (obj.players.findIndex(v => !Player.checkProps(v)) < 0) &&
                 ('isBidCardOpen' in obj) && (typeof obj.isBidCardOpen === 'boolean') &&
@@ -115,7 +128,7 @@ class GameInfo {
         const myPlayer = new MyPlayer(srcMyPlayer.id, srcMyPlayer.name, srcMyPlayer.myCards, srcMyPlayer.pointCards, srcMyPlayer.usedCards, srcMyPlayer.bidCard);
         const players = obj.players.map(v => new Player(v.id, v.name, v.pointCards, v.usedCards, v.bidCard));
         const winnerCurrentTurn = obj.winnerCurrentTurn ? new WinnerCurrentTurn(obj.winnerCurrentTurn.isDraw, obj.winnerCurrentTurn.playerName) : null;
-        return new this(myPlayer, players, obj.turnNum, obj.isBidCardOpen, winnerCurrentTurn);
+        return new this(myPlayer, players, obj.turnNum, obj.pointCards, obj.openPointCardCount, obj.isBidCardOpen, winnerCurrentTurn);
     }
 }
 
