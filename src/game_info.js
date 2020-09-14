@@ -7,6 +7,10 @@ class Player {
         this.bidCard = bidCard;
     }
 
+    clone() {
+        return new Player(this.id, this.name, [...this.pointCards], [...this.usedCards], this.bidCard);
+    }
+
     getSendProps() {
         return { id: this.id, name: this.name, pointCards: this.pointCards, usedCards: this.usedCards, bidCard: this.bidCard };
     }
@@ -34,6 +38,10 @@ class MyPlayer extends Player {
         this.myCards = myCards;
     }
 
+    clone() {
+        return new MyPlayer(this.id, this.name, [...this.myCards], [...this.pointCards], [...this.usedCards], this.bidCard);
+    }
+
     getSendProps() {
         return Object.assign(super.getSendProps(), { myCards: this.myCards });
     }
@@ -49,6 +57,10 @@ class WinnerCurrentTurn {
     constructor(drawFlag, playerName = '') {
         this._draw = drawFlag;
         this.playerName = playerName;
+    }
+
+    clone() {
+        return new WinnerCurrentTurn(this.isDraw(), this.playerName);
     }
 
     isDraw() {
@@ -76,6 +88,10 @@ class GameInfo {
         this.players = players;
         this.isBidCardOpen = isBidCardOpen;
         this.winnerCurrentTurn = winnerCurrentTurn;
+    }
+
+    clone() {
+        return new GameInfo(this.myPlayer.clone(), this.players.map(v => v.clone()), this.turnNum, this.isBidCardOpen, this.winnerCurrentTurn ? this.winnerCurrentTurn.clone() : null);
     }
 
     getSendProps() {
