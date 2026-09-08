@@ -12,7 +12,8 @@
     "test": "yarn lint"
   },
   "devDependencies": {
-    "eslint": "^8.48.0",
-    "eslint-plugin-node": "^11.1.0"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "eslint-plugin-n": "^18.3.0"
   }
 }
