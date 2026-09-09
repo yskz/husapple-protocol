@@ -1,4 +1,4 @@
-class Player {
+export class Player {
     constructor(id, name, pointCards = [], usedCards = [], bidCard = null) {
         this.id = id;
         this.name = name;
@@ -32,7 +32,7 @@ class Player {
     }
 }
 
-class MyPlayer extends Player {
+export class MyPlayer extends Player {
     constructor(id, name, myCards = [], pointCards = [], usedCards = [], bidCard = null) {
         super(id, name, pointCards, usedCards, bidCard);
         this.myCards = myCards;
@@ -53,7 +53,7 @@ class MyPlayer extends Player {
     }
 }
 
-class WinnerCurrentTurn {
+export class WinnerCurrentTurn {
     constructor(drawFlag, playerName = '') {
         this._draw = drawFlag;
         this.playerName = playerName;
@@ -81,7 +81,7 @@ class WinnerCurrentTurn {
     }
 }
 
-class GameInfo {
+export class GameInfo {
     constructor(myPlayer, players = [], turnNum = 1, pointCards = [], openPointCardCount = 1, isBidCardOpen = false, winnerCurrentTurn = null) {
         this.turnNum = turnNum;
         this.pointCards = pointCards;
@@ -132,9 +132,3 @@ class GameInfo {
     }
 }
 
-module.exports = {
-    Player: Player,
-    MyPlayer: MyPlayer,
-    WinnerCurrentTurn: WinnerCurrentTurn,
-    GameInfo: GameInfo,
-}

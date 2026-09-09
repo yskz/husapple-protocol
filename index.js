@@ -1,9 +1,7 @@
-const message = require('./src/message');
-const gameInfo = require('./src/game_info');
+import * as message from './src/message.js';
+import * as gameInfo from './src/game_info.js';
 
-module.exports = {
-    ErrorId: message.ErrorId,
-    playerNameMaxLength: message.playerNameMaxLength,
-    Message: message,
-    GameInfo: gameInfo,
-};
+export const ErrorId = message.ErrorId;
+export const playerNameMaxLength = message.playerNameMaxLength;
+export const Message = message;
+export const GameInfo = gameInfo.GameInfo;
