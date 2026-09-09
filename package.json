@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "husapple's application protocol",
   "main": "index.js",
+  "type": "module",
   "repository": "git@github.com:yskz/husapple-protocol.git",
   "author": "Yoshikazu Satake <yskz@metamagic.co.jp>",
   "license": "AGPL-3.0",

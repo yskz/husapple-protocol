@@ -1,7 +1,7 @@
-const js = require('@eslint/js');
-const node = require('eslint-plugin-n');
+import js from '@eslint/js';
+import node from 'eslint-plugin-n';
 
-module.exports = [
+export default [
     {
         files: ['**/*.js'],
         ignores: ['node_modules/**'],
@@ -9,14 +9,13 @@ module.exports = [
     // eslint:recommended を再現
     js.configs.recommended,
     // eslint-plugin-node の recommended を再現
-    node.configs['flat/recommended-script'],
+    node.configs['flat/recommended-module'],
     {
         name: 'husapple-protocol',
         files: ['**/*.js'],
         rules: {
             'no-unused-vars': ['error', { caughtErrors: 'none', argsIgnorePattern: '^_' }],
             // eslint-plugin-node で指定していたルールを eslint-plugin-n として再現
-            'n/exports-style': ['error', 'module.exports'],
             'n/file-extension-in-import': ['error', 'always'],
             'n/prefer-global/buffer': ['error', 'always'],
             'n/prefer-global/console': ['error', 'always'],

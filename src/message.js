@@ -1,4 +1,4 @@
-const GameInfo = require('./game_info').GameInfo;
+import { GameInfo } from './game_info.js';
 
 const messageType = {
     error: 'ErRoR',
@@ -593,16 +593,16 @@ function parseMessage(message) {
 }
 
 
-module.exports = {
-    Type: messageType,
-    playerNameMaxLength: playerNameMaxLength,
-    ErrorId: errorId,
-    parseMessage: parseMessage,
-    Unknown: Unknown,
-    Error: Error,
-    Hello: Hello,
-    RequestSignIn: RequestSignIn,
-    ResponseSignIn: ResponseSignIn,
-    Matching: Matching,
-    Game: Game,
+export {
+    messageType as Type,
+    playerNameMaxLength,
+    errorId as ErrorId,
+    parseMessage,
+    Unknown,
+    Error,
+    Hello,
+    RequestSignIn,
+    ResponseSignIn,
+    Matching,
+    Game,
 };
